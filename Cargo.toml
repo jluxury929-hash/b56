@@ -1,0 +1,52 @@
+[package]
+name = "apex-predator"
+version = "206.11.0"
+edition = "2021"
+authors = ["Apex Predator Team"]
+description = "High-performance AI-Gated MEV Searcher"
+
+[dependencies]
+# Alloy: The 2026 gold standard for high-performance Ethereum interactions
+# Use "full" to ensure all transport and signer features are available
+alloy = { version = "1.0", features = ["full", "rpc-types-eth", "pubsub", "signer-local"] }
+
+# REVM: Lightning-fast, in-process EVM simulation
+# Features 'std' and 'serde' are standard for state-forking builds
+revm = { version = "8.0", features = ["std", "serde", "memory_db", "optional_no_base_fee"] }
+
+# Concurrency & Graph Math
+# DashMap provides lock-free shard-level access for the market graph
+dashmap = { version = "6.0", features = ["rayon", "serde"] }
+# Petgraph handles complex 12-hop cycle detection
+petgraph = { version = "0.7", features = ["rayon"] }
+# Rayon enables data-parallelism across all vCPU cores
+rayon = "1.10"
+
+# NLP & Sentiment (Performance-optimized Rust port)
+vader-sentiment = "0.1.1"
+
+# Async Runtime & Utilities
+# Multi-thread feature is required for the pinned runtime strategy
+tokio = { version = "1.38", features = ["full", "parking_lot"] }
+anyhow = "1.0"
+dotenv = "0.15"
+colored = "2.1"
+
+# Hardware-level thread management
+core_affinity = "0.8"
+
+[profile.release]
+# Level 3: All optimizations enabled for maximum speed
+opt-level = 3
+# Fat LTO: Cross-crate optimization for the fastest possible binary
+lto = "fat"
+# Single Codegen Unit: Higher optimization at the cost of compile time
+codegen_units = 1
+# Panic Strategy: Reduces binary size and improves performance by omitting unwinding
+panic = "abort"
+# Strip: Remove all debug symbols for a cleaner, faster production binary
+strip = "symbols"
+
+[profile.dev]
+# Keep dependencies optimized even in debug mode to prevent jitter during testing
+opt-level = 1
